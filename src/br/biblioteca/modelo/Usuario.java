@@ -1,33 +1,41 @@
 package br.biblioteca.modelo;
 
-public class Usuario extends Pessoa {
+import java.io.Serializable;
+
+public class Usuario extends Pessoa implements Serializable {
     private static final long serialVersionUID = 1L;
-    private CartaoBiblioteca cartao; // encapsulado no modelo
 
-    public Usuario(String nome, String doc) {
+    private final CartaoBiblioteca cartao; // cartão obrigatório no cadastro
+    private boolean bloqueado = false;     // todo usuário nasce desbloqueado
+
+    public Usuario(String nome, String doc, String numeroCartao) {
         super(nome, doc);
-    }
-
-    /** Emite um cartão para o usuário. */
-    public void emitirCartao(String numero) {
-        if (cartao != null) {
-            throw new IllegalStateException("Usuário já possui cartão.");
+        if (numeroCartao == null || numeroCartao.isBlank()) {
+            throw new IllegalArgumentException("O número do cartão é obrigatório.");
         }
-        cartao = new CartaoBiblioteca(numero, this);
+        this.cartao = new CartaoBiblioteca(numeroCartao, this);
     }
 
-    /** Verifica se o usuário já possui cartão. */
-    public boolean possuiCartao() {
-        return cartao != null;
-    }
-
-    /** Retorna o número do cartão, se existir. */
+    // cartão obrigatório → sempre existe
     public String getNumeroCartao() {
-        return cartao == null ? "" : cartao.getNumero();
+        return cartao.getNumero();
+    }
+
+    // BLOQUEIO
+    public boolean isBloqueado() {
+        return bloqueado;
+    }
+
+    public void bloquear() {
+        bloqueado = true;
+    }
+
+    public void desbloquear() {
+        bloqueado = false;
     }
 
     @Override
     public String toString() {
-        return getNome() + " (" + getDocumento() + ")";
+        return getNome() + " (" + getDocumento() + ") - Cartão: " + getNumeroCartao();
     }
 }
