@@ -18,11 +18,20 @@ public class Biblioteca implements Serializable {
         this.endereco = endereco;
     }
 
+    // Getters adicionados para evitar warnings
+    public String getNome() {
+        return nome;
+    }
+
+    public Endereco getEndereco() {
+        return endereco;
+    }
+
     public void adicionarPublicacao(Publicacao p) { acervo.add(p); }
     public void removerPublicacao(Publicacao p)   { acervo.remove(p); }
 
     public void registrarUsuario(Usuario u) { usuarios.add(u); }
-    public void removerUsuario(Usuario u)   { usuarios.remove(u); } // <-- adicionado
+    public void removerUsuario(Usuario u)   { usuarios.remove(u); }
 
     public List<Publicacao> listarAcervo() { return List.copyOf(acervo); }
     public List<Usuario> listarUsuarios()   { return List.copyOf(usuarios); }
@@ -35,4 +44,5 @@ public class Biblioteca implements Serializable {
         return usuarios.stream().filter(u -> u.getDocumento().equals(doc)).findFirst();
     }
 }
+
 
