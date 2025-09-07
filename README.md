@@ -15,8 +15,8 @@ O projeto permite gerenciar o **acervo de uma biblioteca**, **usuários**, **emp
   - Validar **ID único** para publicações
   - Remover publicações cadastradas
 - **Gerenciamento de usuários**
-  - Cadastrar usuários
-  - Emitir **cartão da biblioteca**
+  - Cadastrar usuários **com número de cartão obrigatório**
+  - Reemitir cartão da biblioteca, se necessário
 - **Empréstimos e devoluções**
   - Emprestar publicações para usuários
   - Registrar devoluções
@@ -28,6 +28,8 @@ O projeto permite gerenciar o **acervo de uma biblioteca**, **usuários**, **emp
     - **Acervo**
     - **Usuários**
     - **Empréstimos**
+- **Modo Console**
+  - Menu interativo para cadastro, listagem, empréstimos e devoluções.
 
 ---
 
@@ -42,8 +44,6 @@ O projeto permite gerenciar o **acervo de uma biblioteca**, **usuários**, **emp
 ### **Aba Empréstimos**
 ![Empréstimos](./prints/emprestimos.png)
 
-
-
 ---
 
 ## 🧩 **Modelagem UML**
@@ -57,7 +57,6 @@ O sistema foi modelado com foco nos conceitos de **POO**:
 
 ### **Diagrama UML**
 ![Diagrama UML](./diagramas/uml.png)
-
 
 ---
 
@@ -87,6 +86,12 @@ O sistema foi modelado com foco nos conceitos de **POO**:
      ```
    - A interface gráfica será aberta.
 
+4. **Modo Console (opcional)**
+   - Para executar pelo console:
+     ```
+     src/br/aplicacao/MainConsole.java
+     ```
+
 ---
 
 ## 📂 **Estrutura do Projeto**
@@ -100,6 +105,7 @@ ProjetoFinalBiblioteca/
 │   └── br/aplicacao/
 ├── acervo.dat
 ├── usuarios.dat
+├── emprestimos.dat
 ├── diagramas/
 │   └── uml.png
 ├── prints/
@@ -112,30 +118,37 @@ ProjetoFinalBiblioteca/
 ---
 
 ## 📌 **Manual do Usuário**
-1. **Cadastrar publicações:**  
-   - Vá até a aba **Acervo**  
-   - Preencha os campos necessários  
-   - Clique em **Adicionar**.
-2. **Remover publicações:**  
-   - Selecione um item da tabela  
-   - Clique em **Remover selecionado**.
-3. **Cadastrar usuários:**  
-   - Vá até a aba **Usuários**  
-   - Preencha nome e documento  
-   - Clique em **Cadastrar**.
-4. **Emitir cartão:**  
-   - Informe o número do cartão  
-   - Ou clique em **Emitir cartão** para usuários existentes.
-5. **Registrar empréstimos e devoluções:**  
-   - Na aba **Empréstimos**  
-   - Selecione usuário e item  
-   - Clique em **Emprestar** ou **Devolver**.
+
+### **1. Cadastrar publicações**
+- Vá até a aba **Acervo**  
+- Preencha os campos necessários  
+- Clique em **Adicionar**.
+
+### **2. Remover publicações**
+- Selecione um item da tabela  
+- Clique em **Remover selecionado**.
+
+### **3. Cadastrar usuários**
+- Vá até a aba **Usuários**  
+- Preencha **nome**, **documento** e **número do cartão** (**obrigatório**)  
+- Clique em **Cadastrar**.
+
+### **4. Reemitir cartão (opcional)**
+- Selecione um usuário que ainda **não possui cartão**  
+- Clique em **Emitir cartão**.
+
+### **5. Registrar empréstimos e devoluções**
+- Na aba **Empréstimos**  
+- Selecione usuário e item  
+- Clique em **Emprestar**  
+- Para devolver, selecione um empréstimo e clique em **Devolver**.
 
 ---
 
-## 🧑‍💻 **Autor**
-**Renata Menezes de Faria**<br>
-**Thamela Cristina Rodrigues de Olieveira**<br>
-**Keila Almeida Santana**<br>
-**Samuel Victor Alventino Silva** <br>
-> Trabalho desenvolvido para disciplina de Programação Orientada a Objetos.
+## 🧑‍💻 **Autores**
+**Renata Menezes de Faria**  
+**Thamela Cristina Rodrigues de Oliveira**  
+**Keila Almeida Santana**  
+**Samuel Victor Alventino Silva**  
+
+> Trabalho desenvolvido para a disciplina de **Programação Orientada a Objetos**.
