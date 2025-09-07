@@ -32,7 +32,6 @@ O projeto permite gerenciar o **acervo de uma biblioteca**, **usuários**, **emp
 ---
 
 ## 🖼️ **Prints da Aplicação**
-> Inclua aqui os **prints reais** do seu sistema:  
 
 ### **Aba Acervo**
 ![Acervo](./prints/acervo.png)
@@ -43,7 +42,7 @@ O projeto permite gerenciar o **acervo de uma biblioteca**, **usuários**, **emp
 ### **Aba Empréstimos**
 ![Empréstimos](./prints/emprestimos.png)
 
-> Crie a pasta `prints` na raiz do projeto e salve as imagens dentro dela.
+
 
 ---
 
@@ -59,7 +58,6 @@ O sistema foi modelado com foco nos conceitos de **POO**:
 ### **Diagrama UML**
 ![Diagrama UML](./diagramas/uml.png)
 
-> Coloque o PNG gerado no diretório `diagramas`.
 
 ---
 
