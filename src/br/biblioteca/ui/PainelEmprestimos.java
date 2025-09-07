@@ -1,8 +1,10 @@
 package br.biblioteca.ui;
 
 import javax.swing.*;
+import javax.swing.table.DefaultTableModel;
 import java.awt.*;
-import java.time.LocalDate;
+import java.time.format.DateTimeFormatter;
+import java.util.List;
 
 import br.biblioteca.modelo.Devolucao;
 import br.biblioteca.modelo.Emprestimo;
@@ -17,9 +19,20 @@ public class PainelEmprestimos extends JPanel {
 
     private final JComboBox<Usuario> cbUsuario = new JComboBox<>();
     private final JComboBox<Publicacao> cbItem = new JComboBox<>();
-    private LocalDate dataPrevista;
 
-    private final JTextArea log = new JTextArea();
+    private final DefaultTableModel tm =
+        new DefaultTableModel(new Object[]{"Usuário", "Documento", "Item", "Data Prevista"}, 0) {
+            private static final long serialVersionUID = 1L; // ✅ adicionada para a classe anônima
+
+            @Override public boolean isCellEditable(int r, int c) { return false; }
+        };
+
+    private final JTable tabela = new JTable(tm);
+
+    // Mantemos a lista alinhada às linhas da tabela
+    private List<Emprestimo> linhas;
+
+    private final DateTimeFormatter FMT = DateTimeFormatter.ofPattern("dd/MM/yyyy");
 
     public PainelEmprestimos(BibliotecaService service) {
         this.service = service;
@@ -31,51 +44,22 @@ public class PainelEmprestimos extends JPanel {
         topo.add(new JLabel("Item:"));
         topo.add(cbItem);
 
-        JButton btnEmprestar = new JButton("Emprestar");
-        JButton btnDevolver  = new JButton("Devolver");
-        topo.add(btnEmprestar);
-        topo.add(btnDevolver);
-
+        JButton btEmprestar = new JButton("Emprestar");
+        JButton btDevolver = new JButton("Devolver selecionado");
+        topo.add(btEmprestar);
+        topo.add(btDevolver);
         add(topo, BorderLayout.NORTH);
 
-        log.setEditable(false);
-        add(new JScrollPane(log), BorderLayout.CENTER);
+        tabela.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
+        tabela.setAutoCreateRowSorter(true);
+        tabela.setFillsViewportHeight(true);
+        add(new JScrollPane(tabela), BorderLayout.CENTER);
+
+        btEmprestar.addActionListener(e -> realizarEmprestimo());
+        btDevolver.addActionListener(e -> devolverSelecionado());
 
         carregarCombos();
-
-        btnEmprestar.addActionListener(e -> {
-            try {
-                Usuario u = (Usuario) cbUsuario.getSelectedItem();
-                Publicacao p = (Publicacao) cbItem.getSelectedItem();
-                if (u == null || p == null) {
-                    JOptionPane.showMessageDialog(this, "Selecione um usuário e um item.");
-                    return;
-                }
-                Emprestimo emp = new Emprestimo(u, p);
-                emp.executar();
-                dataPrevista = emp.getDataPrevista();
-                log.append("Emprestado: " + p.getTitulo() + " para " + u + ". Devolver até: " + dataPrevista + "\n");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro: " + ex.getMessage());
-            }
-        });
-
-        btnDevolver.addActionListener(e -> {
-            try {
-                Usuario u = (Usuario) cbUsuario.getSelectedItem();
-                Publicacao p = (Publicacao) cbItem.getSelectedItem();
-                if (u == null || p == null) {
-                    JOptionPane.showMessageDialog(this, "Selecione um usuário e um item.");
-                    return;
-                }
-                Devolucao dev = new Devolucao(u, p);
-                dev.executar();
-                double multa = dev.calcularMulta(dataPrevista == null ? LocalDate.now() : dataPrevista);
-                log.append("Devolução: " + p.getTitulo() + " de " + u + ". Multa: R$ " + multa + "\n");
-            } catch (Exception ex) {
-                JOptionPane.showMessageDialog(this, "Erro: " + ex.getMessage());
-            }
-        });
+        recarregarTabela(); // carrega a partir do service (emprestimos.dat)
     }
 
     private void carregarCombos() {
@@ -85,5 +69,67 @@ public class PainelEmprestimos extends JPanel {
         cbItem.removeAllItems();
         for (var p : service.getAcervo()) cbItem.addItem(p);
     }
-}
 
+    private void recarregarTabela() {
+        // zera
+        while (tm.getRowCount() > 0) tm.removeRow(0);
+        // carrega
+        linhas = service.getEmprestimos();
+        for (var e : linhas) {
+            tm.addRow(new Object[]{
+                e.getUsuario().getNome(),
+                e.getUsuario().getDocumento(),
+                e.getItem().toString(),
+                e.getDataPrevista() == null ? "" : e.getDataPrevista().format(FMT)
+            });
+        }
+    }
+
+    private void realizarEmprestimo() {
+        Usuario u = (Usuario) cbUsuario.getSelectedItem();
+        Publicacao p = (Publicacao) cbItem.getSelectedItem();
+        if (u == null || p == null) {
+            JOptionPane.showMessageDialog(this, "Selecione usuário e item.");
+            return;
+        }
+        try {
+            service.emprestar(u, p);
+            JOptionPane.showMessageDialog(this, "Empréstimo realizado com sucesso!");
+            recarregarTabela();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+
+    private void devolverSelecionado() {
+        int viewRow = tabela.getSelectedRow();
+        if (viewRow < 0) {
+            JOptionPane.showMessageDialog(this, "Selecione um empréstimo na tabela.");
+            return;
+        }
+        int modelRow = tabela.convertRowIndexToModel(viewRow);
+        Emprestimo alvo = linhas.get(modelRow);
+
+        int resp = JOptionPane.showConfirmDialog(this,
+            "Confirmar devolução de:\n" + alvo.getItem() + "\npor " + alvo.getUsuario().getNome() + "?",
+            "Confirmar devolução", JOptionPane.YES_NO_OPTION);
+
+        if (resp != JOptionPane.YES_OPTION) return;
+
+        try {
+            Devolucao dev = service.devolver(alvo);
+            long atraso = dev.diasAtraso(alvo.getDataPrevista());
+            double multa = dev.calcularMulta(alvo.getDataPrevista());
+
+            String msg = "Devolução concluída.";
+            if (atraso > 0) {
+                msg += "\nAtraso: " + atraso + " dia(s)\nMulta: R$ " + String.format("%.2f", multa);
+            }
+            JOptionPane.showMessageDialog(this, msg, "Devolução", JOptionPane.INFORMATION_MESSAGE);
+
+            recarregarTabela();
+        } catch (Exception ex) {
+            JOptionPane.showMessageDialog(this, "Erro: " + ex.getMessage(), "Erro", JOptionPane.ERROR_MESSAGE);
+        }
+    }
+}

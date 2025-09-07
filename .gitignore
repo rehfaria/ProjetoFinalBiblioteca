@@ -46,4 +46,5 @@ Thumbs.db
 # Permitir estes .dat para o trabalho
 !acervo.dat
 !usuarios.dat
+!emprestimos.dat
 

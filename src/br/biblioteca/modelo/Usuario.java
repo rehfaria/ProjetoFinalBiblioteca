@@ -1,25 +1,33 @@
 package br.biblioteca.modelo;
 
 public class Usuario extends Pessoa {
-    CartaoBiblioteca cartao; // package-private (encapsulado no modelo)
-    private boolean bloqueado;
+    private static final long serialVersionUID = 1L;
+    private CartaoBiblioteca cartao; // encapsulado no modelo
 
     public Usuario(String nome, String doc) {
         super(nome, doc);
     }
 
+    /** Emite um cartão para o usuário. */
     public void emitirCartao(String numero) {
-        if (cartao != null) throw new IllegalStateException("Usuário já possui cartão.");
+        if (cartao != null) {
+            throw new IllegalStateException("Usuário já possui cartão.");
+        }
         cartao = new CartaoBiblioteca(numero, this);
     }
 
-    // auxiliares para UI
-    public boolean possuiCartao()        { return cartao != null; }
-    public String  getNumeroCartao()     { return cartao == null ? "" : cartao.getNumero(); }
+    /** Verifica se o usuário já possui cartão. */
+    public boolean possuiCartao() {
+        return cartao != null;
+    }
 
-    public boolean isBloqueado()         { return bloqueado; }
-    public void bloquear()               { bloqueado = true; }
-    public void desbloquear()            { bloqueado = false; }
+    /** Retorna o número do cartão, se existir. */
+    public String getNumeroCartao() {
+        return cartao == null ? "" : cartao.getNumero();
+    }
 
-    @Override public String toString()   { return getNome() + " (" + getDocumento() + ")"; }
+    @Override
+    public String toString() {
+        return getNome() + " (" + getDocumento() + ")";
+    }
 }

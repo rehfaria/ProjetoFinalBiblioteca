@@ -1,10 +1,14 @@
 package br.biblioteca.modelo;
+
 public class Bibliotecario extends Pessoa {
+    private static final long serialVersionUID = 1L;
+
     public Bibliotecario(String nome, String doc) {
         super(nome, doc);
     }
 
-    public void autorizarDesbloqueio(Usuario u) {
-        u.desbloquear();
+    @Override
+    public String toString() {
+        return getNome() + " (" + getDocumento() + ")";
     }
 }
