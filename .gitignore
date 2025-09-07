@@ -42,3 +42,8 @@ Thumbs.db
 *.bak
 *.swp
 *.swo
+
+# Permitir estes .dat para o trabalho
+!acervo.dat
+!usuarios.dat
+
