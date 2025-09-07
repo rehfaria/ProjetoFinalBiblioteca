@@ -1,0 +1,44 @@
+# =====================================
+# ProjetoFinalBiblioteca - .gitignore
+# =====================================
+
+# ==== ARQUIVOS SENSÍVEIS ====
+.ssh/
+id_rsa
+id_rsa.pub
+id_ed25519
+id_ed25519.pub
+*.pem
+*.key
+*.p12
+*.jks
+*.keystore
+
+# ==== ARQUIVOS GERADOS PELA APLICAÇÃO ====
+*.dat
+*.log
+*.tmp
+
+# ==== CONFIGURAÇÕES LOCAIS DE IDE ====
+# Eclipse
+.project
+.classpath
+.settings/
+bin/
+
+# IntelliJ IDEA
+.idea/
+*.iml
+out/
+
+# VS Code
+.vscode/
+
+# ==== ARQUIVOS DO SISTEMA OPERACIONAL ====
+.DS_Store
+Thumbs.db
+
+# ==== BACKUPS E ARQUIVOS TEMPORÁRIOS ====
+*.bak
+*.swp
+*.swo
